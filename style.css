@@ -1,0 +1,17 @@
+body {
+    background-color: black;
+}
+
+img {
+    display: none;
+}
+
+#gameScreen {
+    background-color: black;
+    border: 2px solid white;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+}
