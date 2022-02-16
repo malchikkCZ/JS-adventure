@@ -1,5 +1,5 @@
-import Player from './player.js';
-import InputHandler from './input.js';
+import { Player } from './player.js';
+import { InputHandler } from './input.js';
 
 export default class Game {
 
