@@ -4,14 +4,14 @@ Inspired by my beloved Zelda.
 
 <br>
 
-Based on Pygame tutorial by Clear Code, completely remade in JavaScript by me.
-[(link)](https://www.youtube.com/watch?v=QU1pPzEGrqw)
+Based on Pygame tutorial by Clear Code. [(link)](https://www.youtube.com/watch?v=QU1pPzEGrqw)
+Artwork by Pixel-Boy and AAA. [(link)](https://pixel-boy.itch.io/ninja-adventure-asset-pack)
+Completely remade in JavaScript by me. 
 
 <br>
 
-Artwork by Pixel-Boy and AAA.
-[(link)](https://pixel-boy.itch.io/ninja-adventure-asset-pack)
+### [PLAY NOW !](https://malchikkcz.github.io/JS-adventure/)
 
 <br>
 
-### Work in progress!
+*Work in progress, stay tuned for future updates.*
