@@ -1,4 +1,4 @@
-export default class InputHandler {
+export class InputHandler {
 
     constructor(player, game) {
         document.addEventListener('keydown', (event) => {
@@ -16,6 +16,7 @@ export default class InputHandler {
                     player.move('down');
                     break;
             }
+            event.preventDefault();
         });
 
         document.addEventListener('keyup', (event) => {
@@ -41,6 +42,7 @@ export default class InputHandler {
                     }
                     break;
             }
+            event.preventDefault();
         });
     }
 

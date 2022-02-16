@@ -1,7 +1,7 @@
 import { Player } from './player.js';
 import { InputHandler } from './input.js';
 
-export default class Game {
+export class Game {
 
     constructor(gameWidth, gameHeight) {
         this.gameWidth = gameWidth;

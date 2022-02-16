@@ -1,4 +1,4 @@
-export default class Player {
+export class Player {
 
     constructor(game) {
         this.image = document.getElementById("imgPlayer");
@@ -15,8 +15,12 @@ export default class Player {
     }
 
     update(deltaTime) {
-        this.position.x += this.speed.x;
-        this.position.y += this.speed.y;
+        let speed_vect = Math.sqrt(this.speed.x * this.speed.x + this.speed.y * this.speed.y);
+        if (speed_vect > 0) {
+            speed_vect = 1 / speed_vect;
+        }
+        this.position.x += this.speed.x * this.maxSpeed * speed_vect;
+        this.position.y += this.speed.y * this.maxSpeed * speed_vect;
     }
 
     draw(ctx) {
@@ -32,16 +36,16 @@ export default class Player {
     move(direction) {
         switch (direction) {
             case 'left':
-                this.speed.x = -this.maxSpeed;
+                this.speed.x = -1;
                 break;
             case 'right':
-                this.speed.x = this.maxSpeed;
+                this.speed.x = 1;
                 break;
             case 'up':
-                this.speed.y = -this.maxSpeed;
+                this.speed.y = -1;
                 break;
             case 'down':
-                this.speed.y = this.maxSpeed;
+                this.speed.y = 1;
                 break;
         }
     }
