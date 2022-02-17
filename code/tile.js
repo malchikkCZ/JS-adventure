@@ -7,16 +7,18 @@ export class Tile {
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
 
-        this.size = 64;
-        this.offset = 20;
+        this.size =48;
+        this.offset = 15;
         this.position = {x: c * this.size, y: r * this.size};
     }
 
-    draw(ctx) {
+    draw(ctx, player) {
+        let posX = this.position.x + this.game.gameWidth / 2 - player.position.x - player.size / 2;
+        let posY = this.position.y + this.game.gameHeight / 2 - player.position.y - player.size / 2;
         ctx.drawImage(
             this.image,
-            this.position.x,
-            this.position.y,
+            posX,
+            posY,
             this.size,
             this.size
         );

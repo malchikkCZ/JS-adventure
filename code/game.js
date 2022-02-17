@@ -36,7 +36,6 @@ export class Game {
 
         for (let r = 0; r < WORLD_MAP.length; r++) {
             for (let c = 0; c < WORLD_MAP[r].length; c++) {
-                console.log(r, c);
                 if (WORLD_MAP[r][c] === 'p') {
                     this.player = new Player(this, r, c);
                     this.visible_sprites.push(this.player);
@@ -58,6 +57,6 @@ export class Game {
     draw(ctx) {
         this.visible_sprites
             .sort((a, b) => (a.position.y > b.position.y) ? 1 : -1)
-            .forEach((sprite) => sprite.draw(ctx));
+            .forEach((sprite) => sprite.draw(ctx, this.player));
     }
 }

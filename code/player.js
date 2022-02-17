@@ -7,7 +7,7 @@ export class Player {
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
 
-        this.size = 64;
+        this.size = 48;
         this.position = {x: c * this.size, y: r * this.size};
 
         this.speed = {x: 0, y: 0};
@@ -30,11 +30,13 @@ export class Player {
         this.collision('vertical');
     }
 
-    draw(ctx) {
+    draw(ctx, player) {
+        let posX = this.position.x + this.game.gameWidth / 2 - player.position.x - player.size / 2;
+        let posY = this.position.y + this.game.gameHeight / 2 - player.position.y - player.size / 2;
         ctx.drawImage(
             this.image,
-            this.position.x,
-            this.position.y,
+            posX,
+            posY,
             this.size,
             this.size
         );
