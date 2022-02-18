@@ -19,8 +19,7 @@ export class Tile {
                 break;
             case 'grass':
             case 'objects':
-                const imgSource = `../assets/${layer}/${surface}.png`;
-                this.image.src = imgSource;
+                this.image = document.getElementById(layer + surface);
                 this.height = this.image.height * this.scale;
                 this.width = this.image.width * this.scale;
                 if (layer === 'objects') {

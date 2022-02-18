@@ -3,7 +3,7 @@ import { InputHandler } from './input.js';
 import { Tile } from './tile.js';
 
 // import world layout
-import { borders, grass, objects } from '../world/level1.js';
+import { borders, grass, objects } from './level.js';
 
 export class Game {
 
@@ -17,8 +17,7 @@ export class Game {
         this.obstacleSprites = [];
         this.attackableSprites = [];
 
-        // this.bgImage = new Image;
-        this.bgImage = document.getElementById('bgImage');
+        this.bgImage = document.getElementById('background');
         this.bgImage.width *= this.scale;
         this.bgImage.height *= this.scale;
 
@@ -32,7 +31,7 @@ export class Game {
             this.createMap(layer);
         }
 
-        this.player = new Player(this, 20, 20);
+        this.player = new Player(this, 21, 32);
         this.visibleSprites.push(this.player);
 
         new InputHandler(this.player, this);

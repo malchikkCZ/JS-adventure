@@ -1,8 +1,7 @@
 export class Player {
 
     constructor(game, r, c) {
-        this.image = new Image();
-        this.image.src = '../assets/player.png'
+        this.image = document.getElementById('player');
         this.game = game;
 
         this.gameWidth = game.gameWidth;
