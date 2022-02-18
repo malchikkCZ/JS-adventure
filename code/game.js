@@ -17,8 +17,8 @@ export class Game {
         this.obstacleSprites = [];
         this.attackableSprites = [];
 
-        this.bgImage = new Image;
-        this.bgImage.src = '../assets/tilemap/ground.png';
+        // this.bgImage = new Image;
+        this.bgImage = document.getElementById('bgImage');
         this.bgImage.width *= this.scale;
         this.bgImage.height *= this.scale;
 
