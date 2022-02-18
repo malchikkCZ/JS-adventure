@@ -2,52 +2,67 @@ import { Player } from './player.js';
 import { InputHandler } from './input.js';
 import { Tile } from './tile.js';
 
-const WORLD_MAP = [
-    ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
-    ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ','p',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ','x','x','x','x','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x','x','x',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ','x',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ','x','x','x','x','x',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ','x','x','x',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-    ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
-]
+// import world layout
+import { borders, grass, objects } from '../world/level1.js';
 
 export class Game {
 
     constructor(gameWidth, gameHeight) {
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
+        this.scale = 0.75;
+        this.tileSize = 64 * this.scale;
 
-        this.visible_sprites = [];
-        this.obstacle_sprites = [];
+        this.visibleSprites = [];
+        this.obstacleSprites = [];
+        this.attackableSprites = [];
 
-        for (let r = 0; r < WORLD_MAP.length; r++) {
-            for (let c = 0; c < WORLD_MAP[r].length; c++) {
-                if (WORLD_MAP[r][c] === 'p') {
-                    this.player = new Player(this, r, c);
-                    this.visible_sprites.push(this.player);
-                } else if (WORLD_MAP[r][c] === 'x') {
-                    let sprite = new Tile(this, r, c);
-                    this.visible_sprites.push(sprite);
-                    this.obstacle_sprites.push(sprite);
-                }
-            }
+        this.bgImage = new Image;
+        this.bgImage.src = '../assets/tilemap/ground.png';
+        this.bgImage.width *= this.scale;
+        this.bgImage.height *= this.scale;
+
+        this.world = [
+            {name: 'borders', map: borders},
+            {name: 'grass', map: grass},
+            {name: 'objects', map: objects}
+        ]
+        
+        for (let layer of this.world) {
+            this.createMap(layer);
         }
 
+        this.player = new Player(this, 20, 20);
+        this.visibleSprites.push(this.player);
+
         new InputHandler(this.player, this);
+    }
+
+    createMap(layer) {
+        for (let r = 0; r < layer.map.length; r++) {
+            for (let c = 0; c < layer.map[r].length; c++) {
+                const surface = layer.map[r][c]
+                switch (layer.name) {
+                    case 'borders':
+                        if (surface === '395') {
+                            const sprite = new Tile(this, r, c, layer.name, surface);
+                            this.obstacleSprites.push(sprite);
+                        }
+                        break;
+                    case 'grass':
+                    case 'objects':
+                        if (surface !== '-1') {
+                            const sprite = new Tile(this, r, c, layer.name, surface);
+                            this.visibleSprites.push(sprite);
+                            this.obstacleSprites.push(sprite);
+                            if (layer.name === 'grass') {
+                                this.attackableSprites.push(sprite);
+                            }
+                        }
+                        break;
+                    }
+            }
+        }
     }
 
     update(deltaTime) {
@@ -55,7 +70,10 @@ export class Game {
     }
 
     draw(ctx) {
-        this.visible_sprites
+        let posX = this.gameWidth / 2 - this.player.position.x - this.player.width / 2;
+        let posY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
+        ctx.drawImage(this.bgImage, posX, posY, this.bgImage.width, this.bgImage.height);
+        this.visibleSprites
             .sort((a, b) => (a.position.y > b.position.y) ? 1 : -1)
             .forEach((sprite) => sprite.draw(ctx, this.player));
     }
