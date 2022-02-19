@@ -41,8 +41,11 @@ export class Player {
 
         this.weapon = 'sword';
         this.attacking = false;
-        this.cooldown = 600;
+        this.cooldown = 400;
         this.attackTime = 0;
+
+        this.targetPosition = {x: this.position.x, y: this.position.y};
+        this.moving = false;
     }
 
     update() {
@@ -59,6 +62,14 @@ export class Player {
             this.collision('horizontal');
             this.position.y += this.speed.y * this.maxSpeed * speed_vect;
             this.collision('vertical');
+            if (this.moving) {
+                if (Math.abs(this.position.x - this.targetPosition.x) < this.tileSize / 2 && 
+                    Math.abs(this.position.y - this.targetPosition.y) < this.tileSize / 2) {
+                        this.stopMovingTowards();
+                } else {
+                    this.moveTowards(this.targetPosition);
+                }
+            }
         }
     }
 
@@ -124,6 +135,32 @@ export class Player {
                 this.speed.y = 1;
                 break;
         }
+    }
+
+    moveTowards(target) {
+        this.moving = true;
+        this.speed.x = target.x - this.position.x;
+        this.speed.y = target.y - this.position.y;
+        if (Math.abs(this.speed.x) - Math.abs(this.speed.y) > 0) {
+            if (this.speed.x > 0) {
+                this.status = 'right';
+            } else {
+                this.status = 'left';
+            }
+        } else {
+            if (this.speed.y > 0) {
+                this.status = 'down';
+            } else {
+                this.status = 'up';
+            }
+        }
+    }
+
+    stopMovingTowards() {
+        this.targetPosition.x = this.position.x;
+        this.targetPosition.y = this.position.y;
+        this.speed = {x: 0, y: 0};
+        this.moving = false;
     }
 
     attack() {

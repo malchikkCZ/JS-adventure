@@ -35,7 +35,7 @@ export class Weapon {
                 this.position.y = this.player.position.y + this.height + 8;
         }
 
-        this.cooldown = 600;
+        this.cooldown = 400;
         this.creationTime = game.uptime;
         this.killed = false;
     }

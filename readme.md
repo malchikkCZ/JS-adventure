@@ -14,4 +14,16 @@ Completely remade in JavaScript by me.
 
 <br>
 
+**Keyboard controls:**<br>
+- `arrow keys` : movement
+- `spacebar` : attack
+
+<br>
+
+**Mouse controls:**<br>
+- `left button` : movement
+- `right button` : attack
+
+<br>
+
 *Work in progress, stay tuned for future updates.*
