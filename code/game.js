@@ -8,14 +8,18 @@ import { borders, grass, objects } from './level.js';
 export class Game {
 
     constructor(gameWidth, gameHeight) {
+        this.uptime = 0;
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
         this.scale = 0.75;
         this.tileSize = 64 * this.scale;
 
-        this.visibleSprites = [];
-        this.obstacleSprites = [];
-        this.attackableSprites = [];
+        this.groups = {
+            obstacleSprites: [],
+            visibleSprites: [],
+            attackableSprites: [],
+            attackSprites: []
+        };
 
         this.bgImage = document.getElementById('background');
         this.bgImage.width *= this.scale;
@@ -32,7 +36,7 @@ export class Game {
         }
 
         this.player = new Player(this, 21, 32);
-        this.visibleSprites.push(this.player);
+        this.groups.visibleSprites.push(this.player);
 
         new InputHandler(this.player, this);
     }
@@ -45,17 +49,17 @@ export class Game {
                     case 'borders':
                         if (surface === '395') {
                             const sprite = new Tile(this, r, c, layer.name, surface);
-                            this.obstacleSprites.push(sprite);
+                            this.groups.obstacleSprites.push(sprite);
                         }
                         break;
                     case 'grass':
                     case 'objects':
                         if (surface !== '-1') {
                             const sprite = new Tile(this, r, c, layer.name, surface);
-                            this.visibleSprites.push(sprite);
-                            this.obstacleSprites.push(sprite);
+                            this.groups.visibleSprites.push(sprite);
+                            this.groups.obstacleSprites.push(sprite);
                             if (layer.name === 'grass') {
-                                this.attackableSprites.push(sprite);
+                                this.groups.attackableSprites.push(sprite);
                             }
                         }
                         break;
@@ -65,7 +69,13 @@ export class Game {
     }
 
     update(deltaTime) {
-        this.player.update(deltaTime);
+        this.uptime += deltaTime;
+        this.groups.attackSprites.forEach((sprite) => sprite.update());
+
+        Object.entries(this.groups).forEach((group) => {
+            this.groups[group[0]] = this.groups[group[0]].filter((sprite) => !sprite.killed);
+        });
+        this.player.update();
     }
 
     draw(ctx) {
@@ -73,7 +83,7 @@ export class Game {
         let posY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
         ctx.drawImage(this.bgImage, posX, posY, this.bgImage.width, this.bgImage.height);
 
-        const spritesToDraw = this.visibleSprites.filter((sprite) => {
+        const spritesToDraw = this.groups.visibleSprites.filter((sprite) => {
         
             return sprite.position.x > this.player.position.x - this.gameWidth / 2 - sprite.width &&
                 sprite.position.x < this.player.position.x + this.gameWidth / 2 + sprite.width &&

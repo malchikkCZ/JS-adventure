@@ -1,33 +1,52 @@
+import { Weapon } from "./weapon.js";
+
 export class Player {
 
     constructor(game, r, c) {
-        this.image = document.getElementById('player');
         this.game = game;
-
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
         this.tileSize = game.tileSize;
         this.scale = game.scale;
+        this.groups = game.groups;
+
+        this.image = document.getElementById('player');
 
         this.width = this.tileSize;
         this.height = this.tileSize;
+        this.position = {x: c * this.tileSize, y: r * this.tileSize};
         this.verticalOffset = 5;
 
-        this.position = {x: c * this.tileSize, y: r * this.tileSize};
+        this.animationFrames = {
+            'down-idle': [[0, 0]],
+            'right-idle': [[0, 1]],
+            'up-idle': [[0, 2]],
+            'left-idle': [[0, 3]],
+            'down': [[0, 0], [1, 0], [2, 0], [3, 0]],
+            'right': [[0, 1], [1, 1], [2, 1], [3, 1]],
+            'up': [[0, 2], [1, 2], [2, 2], [3, 2]],
+            'left': [[0, 3], [1, 3], [2, 3], [3, 3]],
+            'down-attack': [[4, 0]],
+            'right-attack': [[4, 1]],
+            'up-attack': [[4, 2]],
+            'left-attack': [[4, 3]]
+        }
         this.animationSpeed = 20;
         this.frameIndex = 0;
-        this.status = 'down-idle';
-        this.attacking = false;
-        this.cooldown = 1000;
-        this.attackTime = 0;
 
-        this.speed = {x: 0, y: 0};
         this.maxSpeed = 3;
+        this.speed = {x: 0, y: 0};
+        this.status = 'down-idle';
+        this.killed = false;
+
+        this.weapon = 'sword';
+        this.attacking = false;
+        this.cooldown = 600;
+        this.attackTime = 0;
     }
 
-    update(deltaTime) {
-        this.attackTime += deltaTime;
-        if (this.attacking && this.attackTime >= this.cooldown) {
+    update() {
+        if (this.attacking && this.game.uptime >= this.attackTime + this.cooldown) {
             this.attacking = false;
             this.status = this.status.split('-')[0];
         }
@@ -47,17 +66,10 @@ export class Player {
         let posX = this.position.x + this.gameWidth / 2 - player.position.x - player.width / 2;
         let posY = this.position.y + this.gameHeight / 2 - player.position.y - player.height / 2;
         let animationFrame = this.getAnimationFrame();
-        ctx.drawImage(
-            this.image,
-            animationFrame[0] * this.width / this.scale,
-            animationFrame[1] * this.height / this.scale,
-            this.width / this.scale,
-            this.height / this.scale,
-            posX,
-            posY,
-            this.width,
-            this.height
-        );
+        let animationFramePosX = animationFrame[0] * this.width / this.scale;
+        let animationFramePosY = animationFrame[1] * this.height / this.scale
+        ctx.drawImage(this.image, animationFramePosX, animationFramePosY, this.width / this.scale,
+            this.height / this.scale, posX, posY, this.width, this.height);
     }
 
     updateDirection() {
@@ -90,25 +102,11 @@ export class Player {
 
     getAnimationFrame() {
         this.status = this.updateDirection();
-        const animationFrames = {
-            'down-idle': [[0, 0]],
-            'right-idle': [[0, 1]],
-            'up-idle': [[0, 2]],
-            'left-idle': [[0, 3]],
-            'down': [[0, 0], [1, 0], [2, 0], [3, 0]],
-            'right': [[0, 1], [1, 1], [2, 1], [3, 1]],
-            'up': [[0, 2], [1, 2], [2, 2], [3, 2]],
-            'left': [[0, 3], [1, 3], [2, 3], [3, 3]],
-            'down-attack': [[4, 0]],
-            'right-attack': [[4, 1]],
-            'up-attack': [[4, 2]],
-            'left-attack': [[4, 3]]
-        }
         this.frameIndex = this.frameIndex + this.animationSpeed / 100;
-        if (this.frameIndex >= animationFrames[this.status].length) {
+        if (this.frameIndex >= this.animationFrames[this.status].length) {
             this.frameIndex = 0;
         }
-        return animationFrames[this.status][Math.floor(this.frameIndex)];
+        return this.animationFrames[this.status][Math.floor(this.frameIndex)];
     }
 
     move(direction) {
@@ -129,8 +127,11 @@ export class Player {
     }
 
     attack() {
+        const sprite = new Weapon(this.game, this);
+        this.groups.visibleSprites.push(sprite);
+        this.groups.attackSprites.push(sprite);
         this.attacking = true;
-        this.attackTime = 0;
+        this.attackTime = this.game.uptime;
         this.status = this.status.split('-')[0] + '-attack';
     }
 
@@ -138,13 +139,13 @@ export class Player {
         let obstaclesToCheck;
         switch (direction) {
             case 'horizontal':
-                obstaclesToCheck = this.game.obstacleSprites.filter((object) => {
-                    return object.position.x > this.position.x - 100 && object.position.x < this.position.x + this.width + 100;
+                obstaclesToCheck = this.groups.obstacleSprites.filter((sprite) => {
+                    return sprite.position.x > this.position.x - 100 && sprite.position.x < this.position.x + this.width + 100;
                 });
                 break;
             case 'vertical':
-                obstaclesToCheck = this.game.obstacleSprites.filter((object) => {
-                    return object.position.y > this.position.y - 100 && object.position.y < this.position.y + this.height + 100;
+                obstaclesToCheck = this.groups.obstacleSprites.filter((sprite) => {
+                    return sprite.position.y > this.position.y - 100 && sprite.position.y < this.position.y + this.height + 100;
                 })
                 break;
         }

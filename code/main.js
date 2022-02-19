@@ -6,7 +6,6 @@ let ctx = canvas.getContext('2d');
 const GAME_WIDTH = canvas.getAttribute('width');
 const GAME_HEIGHT = canvas.getAttribute('height');
 
-console.log(GAME_WIDTH, GAME_HEIGHT);
 let game = new Game(GAME_WIDTH, GAME_HEIGHT);
 let lastTime = 0;
 
