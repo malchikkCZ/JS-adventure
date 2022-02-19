@@ -14,7 +14,8 @@ function gameLoop(timestamp) {
     let deltaTime = timestamp - lastTime;
     lastTime = timestamp;
 
-    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.fillStyle = '#71ddee';
+    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     game.update(deltaTime);
     game.draw(ctx);
 

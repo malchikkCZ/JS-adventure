@@ -72,7 +72,17 @@ export class Game {
         let posX = this.gameWidth / 2 - this.player.position.x - this.player.width / 2;
         let posY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
         ctx.drawImage(this.bgImage, posX, posY, this.bgImage.width, this.bgImage.height);
-        this.visibleSprites
+
+        const spritesToDraw = this.visibleSprites.filter((sprite) => {
+        
+            return sprite.position.x > this.player.position.x - this.gameWidth / 2 - sprite.width &&
+                sprite.position.x < this.player.position.x + this.gameWidth / 2 + sprite.width &&
+                sprite.position.y > this.player.position.y - this.gameHeight / 2 - sprite.height &&
+                sprite.position.y < this.player.position.y + this.gameHeight / 2 + sprite.height;
+                
+        });
+
+        spritesToDraw
             .sort((a, b) => (a.position.y > b.position.y) ? 1 : -1)
             .forEach((sprite) => sprite.draw(ctx, this.player));
     }

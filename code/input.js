@@ -2,19 +2,24 @@ export class InputHandler {
 
     constructor(player, game) {
         document.addEventListener('keydown', (event) => {
-            switch(event.key) {
-                case 'ArrowLeft':
-                    player.move('left');
-                    break;
-                case 'ArrowRight':
-                    player.move('right');
-                    break;
-                case 'ArrowUp':
-                    player.move('up');
-                    break;
-                case 'ArrowDown':
-                    player.move('down');
-                    break;
+            if (!player.attacking) {
+                switch(event.key) {
+                    case 'ArrowLeft':
+                        player.move('left');
+                        break;
+                    case 'ArrowRight':
+                        player.move('right');
+                        break;
+                    case 'ArrowUp':
+                        player.move('up');
+                        break;
+                    case 'ArrowDown':
+                        player.move('down');
+                        break;
+                    case ' ' || 'Spacebar':
+                        player.attack();
+                        break;
+                }
             }
             event.preventDefault();
         });
