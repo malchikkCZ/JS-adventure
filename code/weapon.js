@@ -1,41 +1,50 @@
+// import settings
+import { settings } from './settings.js';
+
+
 export class Weapon {
+
     constructor(game, player) {
         this.game = game;
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
         this.tileSize = game.tileSize;
-        this.scale = game.scale;
         this.groups = game.groups;
 
         this.player = player;
         this.direction = player.status.split('-')[0];
-        this.type = player.weapon;
+        this.type = settings.weapons[player.weaponIndex];
 
-        this.image = document.getElementById(this.type + '-' + this.direction);
+        this.image = document.getElementById(this.type.name + '-' + this.direction);
 
-        this.width = this.image.width * this.scale;
-        this.height = this.image.height * this.scale;
+        this.width = this.image.width;
+        this.height = this.image.height;
         this.position = {x: 0, y: 0};
+
+        this.weaponOffset = {
+            x: this.player.width / 2 - this.width / 2 - 5,
+            y: this.player.height / 2 - this.height / 2 + 8
+        }
 
         switch (this.direction) {
             case 'down':
-                this.position.x = this.player.position.x + 6;
+                this.position.x = this.player.position.x + this.weaponOffset.x;
                 this.position.y = this.player.position.y + this.player.height;
                 break;
             case 'right':
                 this.position.x = this.player.position.x + this.player.width;
-                this.position.y = this.player.position.y + this.height + 8;
+                this.position.y = this.player.position.y + this.weaponOffset.y;
                 break;
             case 'up':
-                this.position.x = this.player.position.x + 6;
+                this.position.x = this.player.position.x + this.weaponOffset.x;
                 this.position.y = this.player.position.y - this.height;
                 break;
             case 'left':
                 this.position.x = this.player.position.x - this.width;
-                this.position.y = this.player.position.y + this.height + 8;
+                this.position.y = this.player.position.y + this.weaponOffset.y;
         }
 
-        this.cooldown = 400;
+        this.cooldown = this.type.cooldown;
         this.creationTime = game.uptime;
         this.killed = false;
     }
@@ -55,9 +64,7 @@ export class Weapon {
         }
     }
 
-    draw(ctx, player) {
-        let posX = this.position.x + this.gameWidth / 2 - player.position.x - player.width / 2;
-        let posY = this.position.y + this.gameHeight / 2 - player.position.y - player.height / 2;
-        ctx.drawImage(this.image, posX, posY, this.width, this.height);
+    draw(ctx, posX, posY) {
+        ctx.drawImage(this.image, this.position.x + posX, this.position.y + posY, this.width, this.height);
     }
 }

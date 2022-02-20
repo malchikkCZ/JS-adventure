@@ -22,6 +22,15 @@ export class InputHandler {
                     case ' ' || 'Spacebar':
                         player.attack();
                         break;
+                    case 'q':
+                        if (player.canSwitchWeapon) {
+                            player.canSwitchWeapon = false;
+                            player.weaponIndex++;
+                            if (player.weaponIndex > player.weapons.length - 1) {
+                                player.weaponIndex = 0;
+                            }
+                        }
+                        break;
                 }
             }
         });
@@ -48,6 +57,9 @@ export class InputHandler {
                     if (player.speed.y > 0) {
                         player.speed.y = 0;
                     }
+                    break;
+                case 'q':
+                    player.canSwitchWeapon = true;
                     break;
             }
         });

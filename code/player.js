@@ -1,5 +1,9 @@
 import { Weapon } from "./weapon.js";
 
+// import settings
+import { settings } from './settings.js';
+
+
 export class Player {
 
     constructor(game, r, c) {
@@ -7,7 +11,6 @@ export class Player {
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
         this.tileSize = game.tileSize;
-        this.scale = game.scale;
         this.groups = game.groups;
 
         this.image = document.getElementById('player');
@@ -15,7 +18,7 @@ export class Player {
         this.width = this.tileSize;
         this.height = this.tileSize;
         this.position = {x: c * this.tileSize, y: r * this.tileSize};
-        this.verticalOffset = 5;
+        this.verticalOffset = 3;
 
         this.animationFrames = {
             'down-idle': [[0, 0]],
@@ -31,17 +34,23 @@ export class Player {
             'up-attack': [[4, 2]],
             'left-attack': [[4, 3]]
         }
-        this.animationSpeed = 20;
+        this.animationSpeed = settings.player.animationSpeed;
         this.frameIndex = 0;
 
-        this.maxSpeed = 3;
+        this.maxHealth = settings.player.stats.health;
+        this.health = this.maxHealth * 0.8;
+
+        this.maxSpeed = settings.player.stats.speed;
         this.speed = {x: 0, y: 0};
         this.status = 'down-idle';
         this.killed = false;
 
-        this.weapon = 'sword';
+        this.weapons = settings.weapons;
+        this.weaponIndex = 0;
+        this.canSwitchWeapon = true;
         this.attacking = false;
-        this.cooldown = 400;
+
+        this.cooldown = settings.weapons[this.weaponIndex].cooldown;
         this.attackTime = 0;
 
         this.targetPosition = {x: this.position.x, y: this.position.y};
@@ -58,9 +67,9 @@ export class Player {
             if (speed_vect > 0) {
                 speed_vect = 1 / speed_vect;
             }
-            this.position.x += this.speed.x * this.maxSpeed * speed_vect;
+            this.position.x += Math.round(this.speed.x * this.maxSpeed * speed_vect);
             this.collision('horizontal');
-            this.position.y += this.speed.y * this.maxSpeed * speed_vect;
+            this.position.y += Math.round(this.speed.y * this.maxSpeed * speed_vect);
             this.collision('vertical');
             if (this.moving) {
                 if (Math.abs(this.position.x - this.targetPosition.x) < this.tileSize / 2 && 
@@ -73,14 +82,12 @@ export class Player {
         }
     }
 
-    draw(ctx, player) {
-        let posX = this.position.x + this.gameWidth / 2 - player.position.x - player.width / 2;
-        let posY = this.position.y + this.gameHeight / 2 - player.position.y - player.height / 2;
+    draw(ctx, posX, posY) {
         let animationFrame = this.getAnimationFrame();
-        let animationFramePosX = animationFrame[0] * this.width / this.scale;
-        let animationFramePosY = animationFrame[1] * this.height / this.scale
-        ctx.drawImage(this.image, animationFramePosX, animationFramePosY, this.width / this.scale,
-            this.height / this.scale, posX, posY, this.width, this.height);
+        let animationFramePosX = animationFrame[0] * this.width;
+        let animationFramePosY = animationFrame[1] * this.height;
+        ctx.drawImage(this.image, animationFramePosX, animationFramePosY,
+            this.width, this.height, this.position.x + posX, this.position.y + posY, this.width, this.height);
     }
 
     updateDirection() {
@@ -165,6 +172,7 @@ export class Player {
 
     attack() {
         const sprite = new Weapon(this.game, this);
+        this.cooldown = settings.weapons[this.weaponIndex].cooldown;
         this.groups.visibleSprites.push(sprite);
         this.groups.attackSprites.push(sprite);
         this.attacking = true;

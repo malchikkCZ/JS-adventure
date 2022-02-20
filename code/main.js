@@ -1,20 +1,24 @@
 import { Game } from './game.js';
 
+// import settings
+import { settings } from './settings.js';
+
 let canvas = document.getElementById('gameScreen');
 let ctx = canvas.getContext('2d');
 
-const GAME_WIDTH = canvas.getAttribute('width');
-const GAME_HEIGHT = canvas.getAttribute('height');
+const gameWidth = canvas.getAttribute('width');
+const gameHeight = canvas.getAttribute('height');
+const backgroundColor = settings.general.backgroundColor;
 
-let game = new Game(GAME_WIDTH, GAME_HEIGHT);
+let game = new Game(gameWidth, gameHeight);
 let lastTime = 0;
 
 function gameLoop(timestamp) {
     let deltaTime = timestamp - lastTime;
     lastTime = timestamp;
 
-    ctx.fillStyle = '#71ddee';
-    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, gameWidth, gameHeight);
     game.update(deltaTime);
     game.draw(ctx);
 

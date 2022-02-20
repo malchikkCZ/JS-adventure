@@ -1,9 +1,14 @@
 import { Player } from './player.js';
 import { InputHandler } from './input.js';
 import { Tile } from './tile.js';
+import { UI } from './ui.js';
 
 // import world layout
 import { borders, grass, objects } from './level.js';
+
+// import settings
+import { settings } from './settings.js';
+
 
 export class Game {
 
@@ -11,8 +16,7 @@ export class Game {
         this.uptime = 0;
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
-        this.scale = 0.75;
-        this.tileSize = 64 * this.scale;
+        this.tileSize = settings.general.tileSize;
 
         this.groups = {
             obstacleSprites: [],
@@ -21,9 +25,8 @@ export class Game {
             attackSprites: []
         };
 
+        // graphic assets
         this.bgImage = document.getElementById('background');
-        this.bgImage.width *= this.scale;
-        this.bgImage.height *= this.scale;
 
         this.world = [
             {name: 'borders', map: borders},
@@ -38,7 +41,9 @@ export class Game {
         this.player = new Player(this, 21, 32);
         this.groups.visibleSprites.push(this.player);
 
+        // user interface
         new InputHandler(this.player, this);
+        this.ui = new UI(this, this.player);
     }
 
     createMap(layer) {
@@ -79,8 +84,8 @@ export class Game {
     }
 
     draw(ctx) {
-        let posX = this.gameWidth / 2 - this.player.position.x - this.player.width / 2;
-        let posY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
+        const posX = this.gameWidth / 2 - this.player.position.x - this.player.width / 2;
+        const posY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
         ctx.drawImage(this.bgImage, posX, posY, this.bgImage.width, this.bgImage.height);
 
         const spritesToDraw = this.groups.visibleSprites.filter((sprite) => {
@@ -94,6 +99,8 @@ export class Game {
 
         spritesToDraw
             .sort((a, b) => (a.position.y > b.position.y) ? 1 : -1)
-            .forEach((sprite) => sprite.draw(ctx, this.player));
+            .forEach((sprite) => sprite.draw(ctx, posX, posY));
+
+        this.ui.draw(ctx);
     }
 }
