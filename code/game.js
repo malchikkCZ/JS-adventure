@@ -18,6 +18,7 @@ export class Game {
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
         this.tileSize = settings.general.tileSize;
+        this.gameOver = false;
 
         this.groups = {
             obstacleSprites: [],
@@ -44,6 +45,10 @@ export class Game {
         // user interface
         new InputHandler(this.player, this);
         this.ui = new UI(this, this.player);
+        this.restartBtn = document.getElementById('restartBtn');
+        this.restartBtn.addEventListener('click', () => {
+            window.location.reload();
+        });
     }
 
     createMap(layer) {
@@ -85,14 +90,16 @@ export class Game {
     }
 
     update(deltaTime) {
-        this.uptime += deltaTime;
-        this.groups.attackSprites.forEach((sprite) => sprite.update());
-
-        Object.entries(this.groups).forEach((group) => {
-            this.groups[group[0]] = this.groups[group[0]].filter((sprite) => !sprite.killed);
-        });
-
-        this.groups.entitySprites.forEach((sprite) => sprite.update());
+        if (!this.gameOver) {
+            this.uptime += deltaTime;
+            this.groups.attackSprites.forEach((sprite) => sprite.update());
+    
+            Object.entries(this.groups).forEach((group) => {
+                this.groups[group[0]] = this.groups[group[0]].filter((sprite) => !sprite.killed);
+            });
+    
+            this.groups.entitySprites.forEach((sprite) => sprite.update());
+        }
     }
 
     draw(ctx) {
@@ -112,5 +119,11 @@ export class Game {
             .forEach((sprite) => sprite.draw(ctx, posX, posY));
 
         this.ui.draw(ctx);
+        if (this.gameOver) {
+            ctx.fillStyle = '#00000050';
+            ctx.fillRect(0, 0, this.gameWidth, this.gameHeight);
+            this.ui.showGameOver(ctx, 'GAME OVER');
+            document.getElementById('btnContainer').style.display = 'flex';
+        }
     }
 }

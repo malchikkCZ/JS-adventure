@@ -13,6 +13,7 @@ export class Player extends Entity {
         this.status = 'down-idle';
 
         this.maxHealth = this.entity.stats.health;
+        this.score = 0;
 
         this.weapons = settings.weapons;
         this.weaponIndex = 0;
@@ -28,24 +29,26 @@ export class Player extends Entity {
 
     update() {
         if (this.health <= 0) {
-            // TODO: trigger player death
             this.health = 0;
-        }
-        if (this.attacking && this.game.uptime >= this.attackTime + this.cooldown) {
-            this.attacking = false;
-            this.status = this.status.split('-')[0];
-        }
-        if (this.invulnerable && this.game.uptime >= this.hitTime + this.invulnerableTime) {
-            this.invulnerable = false;
-        }
-        if (!this.attacking) {
-            this.updatePosition();
-            if (this.moving) {
-                if (Math.abs(this.position.x - this.targetPosition.x) < this.tileSize / 2 && 
-                    Math.abs(this.position.y - this.targetPosition.y) < this.tileSize / 2) {
-                        this.stopMovingTowards();
-                } else {
-                    this.moveTowards(this.targetPosition);
+            this.game.gameOver = true;
+        } else {
+            if (this.attacking && this.game.uptime >= this.attackTime + this.cooldown) {
+                this.attacking = false;
+                this.status = this.status.split('-')[0];
+            }
+            if (this.invulnerable && this.game.uptime >= this.hitTime + this.invulnerableTime) {
+                this.invulnerable = false;
+            }
+            this.animationFrame = this.getAnimationFrame();
+            if (!this.attacking) {
+                this.updatePosition();
+                if (this.moving) {
+                    if (Math.abs(this.position.x - this.targetPosition.x) < this.tileSize / 2 && 
+                        Math.abs(this.position.y - this.targetPosition.y) < this.tileSize / 2) {
+                            this.stopMovingTowards();
+                    } else {
+                        this.moveTowards(this.targetPosition);
+                    }
                 }
             }
         }

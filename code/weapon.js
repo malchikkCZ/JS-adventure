@@ -67,6 +67,7 @@ export class Weapon {
                                 sprite.attackResistance();
                             }
                             if (sprite.health <= 0) {
+                                this.player.score += sprite.entity.stats.exp;
                                 sprite.killed = true;
                             }
                         }

@@ -1,17 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
-    background-color: #000000;
+    font-family: 'Press Start 2P', monospace;
+    background-color: #694E4E;
 }
 
 img {
     display: none;
 }
 
-#gameScreen {
-    background-color: #000000;
-    border: 2px solid #ffffff;
-}
-
 .container {
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#gameScreen {
+    background-color: #000000;
+    border: 3px solid #000000;
+}
+
+#btnContainer {
+    display: none;
     justify-content: center;
+    column-gap: 30px;
+}
+
+.button {
+    font-family: 'Press Start 2P', monospace;
+    background-color: #222222;
+    border: 3px solid #000000;
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+    margin-top: 30px;
+    padding: 10px 30px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #71DDEE;
+    color: #000000;
 }

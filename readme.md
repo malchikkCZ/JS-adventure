@@ -6,7 +6,7 @@ Inspired by my beloved Zelda.
 
 Based on Pygame tutorial by Clear Code [(link)](https://www.youtube.com/watch?v=QU1pPzEGrqw).<br>
 Artwork by Pixel-Boy and AAA [(link)](https://pixel-boy.itch.io/ninja-adventure-asset-pack).<br>
-Completely remade in JavaScript by me. 
+Completely remade in JavaScript by me [(link)](http://www.viktorbem.cz/).
 
 <br>
 
@@ -15,13 +15,14 @@ Completely remade in JavaScript by me.
 <br>
 
 **Keyboard controls:**<br>
-- `arrow keys` : movement
+- `arrow keys` : move
 - `spacebar` : attack
+- `q` : change weapon
 
 <br>
 
 **Mouse controls:**<br>
-- `left button` : movement
+- `left button` : move
 - `right button` : attack
 
 <br>

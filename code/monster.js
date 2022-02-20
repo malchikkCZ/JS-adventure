@@ -31,11 +31,21 @@ export class Monster extends Entity {
                 this.speed = {x: dx, y: dy};
             }
         }
+        if (distanceToPlayer > this.entity.stats.noticeRadius) {
+            this.speed = {x: 0, y: 0};
+        }
+        this.animationFrame = this.getAnimationFrame();
         this.updatePosition();
     }
 
     updateStatus() {
-        return this.status;
+        if (this.attackTime) {
+            return 'attack';
+        } else if (this.speed.x !== 0 || this.speed.y !== 0) {
+            return 'move';
+        } else {
+            return 'idle';
+        }
     }
 
     attackResistance() {

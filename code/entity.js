@@ -31,6 +31,7 @@ export class Entity {
         this.animationSpeed = settings.general.animationSpeed;
         this.frameIndex = 0;
         this.status = 'idle';
+        this.animationFrame = [0, 0];
     
         // ingame stats
         this.killed = false;
@@ -112,9 +113,8 @@ export class Entity {
     }
 
     draw(ctx, posX, posY) {
-        let animationFrame = this.getAnimationFrame();
-        let animationFramePosX = animationFrame[0] * this.width;
-        let animationFramePosY = animationFrame[1] * this.height;
+        let animationFramePosX = this.animationFrame[0] * this.width;
+        let animationFramePosY = this.animationFrame[1] * this.height;
         if (!this.invulnerable || Math.floor(this.game.uptime / 75) % 2) {
             ctx.drawImage(this.image, animationFramePosX, animationFramePosY,
                 this.width, this.height, this.position.x + posX, this.position.y + posY, this.width, this.height);
