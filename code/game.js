@@ -1,10 +1,11 @@
 import { Player } from './player.js';
+import { Monster } from './monster.js';
 import { InputHandler } from './input.js';
 import { Tile } from './tile.js';
 import { UI } from './ui.js';
 
 // import world layout
-import { borders, grass, objects } from './level.js';
+import { borders, grass, objects, entities } from './level.js';
 
 // import settings
 import { settings } from './settings.js';
@@ -22,7 +23,8 @@ export class Game {
             obstacleSprites: [],
             visibleSprites: [],
             attackableSprites: [],
-            attackSprites: []
+            attackSprites: [],
+            entitySprites: []
         };
 
         // graphic assets
@@ -31,15 +33,13 @@ export class Game {
         this.world = [
             {name: 'borders', map: borders},
             {name: 'grass', map: grass},
-            {name: 'objects', map: objects}
+            {name: 'objects', map: objects},
+            {name: 'entities', map: entities}
         ]
         
         for (let layer of this.world) {
             this.createMap(layer);
         }
-
-        this.player = new Player(this, 21, 32);
-        this.groups.visibleSprites.push(this.player);
 
         // user interface
         new InputHandler(this.player, this);
@@ -49,26 +49,37 @@ export class Game {
     createMap(layer) {
         for (let r = 0; r < layer.map.length; r++) {
             for (let c = 0; c < layer.map[r].length; c++) {
-                const surface = layer.map[r][c]
-                switch (layer.name) {
-                    case 'borders':
-                        if (surface === '395') {
-                            const sprite = new Tile(this, r, c, layer.name, surface);
-                            this.groups.obstacleSprites.push(sprite);
-                        }
-                        break;
-                    case 'grass':
-                    case 'objects':
-                        if (surface !== '-1') {
-                            const sprite = new Tile(this, r, c, layer.name, surface);
+                const mapCode = layer.map[r][c]
+                if (mapCode !== '-1') {
+                    switch (layer.name) {
+                        case 'borders':
+                            if (mapCode === '395') {
+                                const sprite = new Tile(this, r, c, layer.name, mapCode);
+                                this.groups.obstacleSprites.push(sprite);
+                            }
+                            break;
+                        case 'grass':
+                        case 'objects':
+                            const sprite = new Tile(this, r, c, layer.name, mapCode);
                             this.groups.visibleSprites.push(sprite);
                             this.groups.obstacleSprites.push(sprite);
                             if (layer.name === 'grass') {
                                 this.groups.attackableSprites.push(sprite);
                             }
-                        }
-                        break;
+                            break;
+                        case 'entities':
+                            if (mapCode === '394') {
+                                this.player = new Player(this, r, c, mapCode);
+                                this.groups.visibleSprites.push(this.player);
+                                this.groups.entitySprites.push(this.player);
+                            } else {
+                                const sprite = new Monster(this, r, c, mapCode);
+                                this.groups.visibleSprites.push(sprite);
+                                this.groups.attackableSprites.push(sprite);
+                                this.groups.entitySprites.push(sprite);
+                            }
                     }
+                }
             }
         }
     }
@@ -80,7 +91,8 @@ export class Game {
         Object.entries(this.groups).forEach((group) => {
             this.groups[group[0]] = this.groups[group[0]].filter((sprite) => !sprite.killed);
         });
-        this.player.update();
+
+        this.groups.entitySprites.forEach((sprite) => sprite.update());
     }
 
     draw(ctx) {
@@ -89,12 +101,10 @@ export class Game {
         ctx.drawImage(this.bgImage, posX, posY, this.bgImage.width, this.bgImage.height);
 
         const spritesToDraw = this.groups.visibleSprites.filter((sprite) => {
-        
             return sprite.position.x > this.player.position.x - this.gameWidth / 2 - sprite.width &&
                 sprite.position.x < this.player.position.x + this.gameWidth / 2 + sprite.width &&
                 sprite.position.y > this.player.position.y - this.gameHeight / 2 - sprite.height &&
                 sprite.position.y < this.player.position.y + this.gameHeight / 2 + sprite.height;
-                
         });
 
         spritesToDraw

@@ -38,11 +38,13 @@ export class UI {
         ctx.fillStyle = this.bgColor;
         ctx.fillRect(10 + this.stroke, 10 + this.stroke,
             this.healthBarWidth - this.stroke * 2, this.barHeight - this.stroke * 2);
-        const ratio = this.player.health / this.player.maxHealth;
-        ctx.fillStyle = this.healthColor;
-        ctx.fillRect(10 + this.stroke, 10 + this.stroke,
-            this.healthBarWidth * ratio - this.stroke * 2, this.barHeight  - this.stroke * 2);
-
+        if (this.player.health > 0) {
+            const ratio = this.player.health / this.player.maxHealth;
+            ctx.fillStyle = this.healthColor;
+            ctx.fillRect(10 + this.stroke, 10 + this.stroke,
+                this.healthBarWidth * ratio - this.stroke * 2, this.barHeight  - this.stroke * 2);    
+        }
+        
         // weapon select box
         ctx.fillStyle = this.strokeColor;
         if (!this.player.canSwitchWeapon) {

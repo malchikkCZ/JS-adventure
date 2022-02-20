@@ -6,6 +6,7 @@ export class Tile {
         this.gameHeight = game.gameHeight;
         this.tileSize = game.tileSize;
 
+        this.name = layer;
         this.verticalOffset = 0;
         switch (layer) {
             case 'borders':

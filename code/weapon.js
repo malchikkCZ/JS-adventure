@@ -14,6 +14,7 @@ export class Weapon {
         this.player = player;
         this.direction = player.status.split('-')[0];
         this.type = settings.weapons[player.weaponIndex];
+        this.damage = this.type.damage;
 
         this.image = document.getElementById(this.type.name + '-' + this.direction);
 
@@ -58,7 +59,17 @@ export class Weapon {
                     this.position.x < sprite.position.x + sprite.width &&
                     this.position.y + this.height > sprite.position.y &&
                     this.position.y < sprite.position.y + sprite.height) {
-                        sprite.killed = true;
+                        if (sprite.name === 'grass') {
+                            sprite.killed = true;
+                        } else {
+                            if (!sprite.invulnerable) {
+                                sprite.getDamage(this.damage, this.cooldown);
+                                sprite.attackResistance();
+                            }
+                            if (sprite.health <= 0) {
+                                sprite.killed = true;
+                            }
+                        }
                 }
             });
         }
