@@ -20,7 +20,6 @@ export class Player extends Entity {
 
         this.cooldown = settings.weapons[this.weaponIndex].cooldown;
 
-        this.moving = false;
         this.attacking = false;
         this.canSwitchWeapon = true;
 
@@ -42,14 +41,22 @@ export class Player extends Entity {
             this.animationFrame = this.getAnimationFrame();
             if (!this.attacking) {
                 this.updatePosition();
-                if (this.moving) {
-                    if (Math.abs(this.position.x - this.targetPosition.x) < this.tileSize / 2 && 
-                        Math.abs(this.position.y - this.targetPosition.y) < this.tileSize / 2) {
-                            this.stopMovingTowards();
-                    } else {
-                        this.moveTowards(this.targetPosition);
-                    }
-                }
+            }
+        }
+    }
+
+    updateDirection(dx, dy) {
+        if (!this.attacking && Math.abs(dx) - Math.abs(dy) > 0) {
+            if (dx > 0) {
+                this.status = 'right';
+            } else {
+                this.status = 'left';
+            }
+        } else {
+            if (dy > 0) {
+                this.status = 'down';
+            } else {
+                this.status = 'up';
             }
         }
     }
@@ -74,12 +81,9 @@ export class Player extends Entity {
                 return 'down';
             } else if (this.speed.y < 0 && !['left', 'right'].includes(this.status)) {
                 return 'up';
-            } else {
-                return this.status;
             }
-        } else {
-            return this.status;
         }
+        return this.status;
     }
 
     move(direction) {
@@ -97,32 +101,6 @@ export class Player extends Entity {
                 this.speed.y = 1;
                 break;
         }
-    }
-
-    moveTowards(target) {
-        this.moving = true;
-        this.speed.x = target.x - this.position.x;
-        this.speed.y = target.y - this.position.y;
-        if (Math.abs(this.speed.x) - Math.abs(this.speed.y) > 0) {
-            if (this.speed.x > 0) {
-                this.status = 'right';
-            } else {
-                this.status = 'left';
-            }
-        } else {
-            if (this.speed.y > 0) {
-                this.status = 'down';
-            } else {
-                this.status = 'up';
-            }
-        }
-    }
-
-    stopMovingTowards() {
-        this.targetPosition.x = this.position.x;
-        this.targetPosition.y = this.position.y;
-        this.speed = {x: 0, y: 0};
-        this.moving = false;
     }
 
     attack() {

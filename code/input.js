@@ -2,32 +2,37 @@ export class InputHandler {
 
     constructor(player, game) {
 
+        this.game = game;
+        this.gameWidth = game.gameWidth;
+        this.gameHeight = game.gameHeight;
+        this.player = player;
+
         // keyboard controls
         document.addEventListener('keydown', (event) => {
             event.preventDefault();
-            if (!player.attacking) {
+            if (!this.player.attacking) {
                 switch (event.key) {
                     case 'ArrowLeft':
-                        player.move('left');
+                        this.player.move('left');
                         break;
                     case 'ArrowRight':
-                        player.move('right');
+                        this.player.move('right');
                         break;
                     case 'ArrowUp':
-                        player.move('up');
+                        this.player.move('up');
                         break;
                     case 'ArrowDown':
-                        player.move('down');
+                        this.player.move('down');
                         break;
                     case ' ' || 'Spacebar':
-                        player.attack();
+                        this.player.attack();
                         break;
                     case 'q':
-                        if (player.canSwitchWeapon) {
-                            player.canSwitchWeapon = false;
-                            player.weaponIndex++;
-                            if (player.weaponIndex > player.weapons.length - 1) {
-                                player.weaponIndex = 0;
+                        if (this.player.canSwitchWeapon) {
+                            this.player.canSwitchWeapon = false;
+                            this.player.weaponIndex++;
+                            if (this.player.weaponIndex > this.player.weapons.length - 1) {
+                                this.player.weaponIndex = 0;
                             }
                         }
                         break;
@@ -39,59 +44,74 @@ export class InputHandler {
             event.preventDefault();
             switch (event.key) {
                 case 'ArrowLeft':
-                    if (player.speed.x < 0) {
-                        player.speed.x = 0;
+                    if (this.player.speed.x < 0) {
+                        this.player.speed.x = 0;
                     }
                     break;
                 case 'ArrowRight':
-                    if (player.speed.x > 0) {
-                        player.speed.x = 0;
+                    if (this.player.speed.x > 0) {
+                        this.player.speed.x = 0;
                     }
                     break;
                 case 'ArrowUp':
-                    if (player.speed.y < 0) {
-                        player.speed.y = 0;
+                    if (this.player.speed.y < 0) {
+                        this.player.speed.y = 0;
                     }
                     break;
                 case 'ArrowDown':
-                    if (player.speed.y > 0) {
-                        player.speed.y = 0;
+                    if (this.player.speed.y > 0) {
+                        this.player.speed.y = 0;
                     }
                     break;
                 case 'q':
-                    player.canSwitchWeapon = true;
+                    this.player.canSwitchWeapon = true;
                     break;
             }
         });
 
         // mouse controls
-        document.addEventListener('mousemove', followMouse);
-        document.addEventListener('mousedown', followMouse);
-
-        function followMouse(event) {
-            event.preventDefault();
-            if (!player.attacking && event.target.id === 'gameScreen' && event.buttons === 1) {
-                let offsetX = game.gameWidth / 2 - player.position.x - player.width / 2;
-                let offsetY = game.gameHeight / 2 - player.position.y - player.height / 2;
-                let mouseX = event.clientX - event.target.offsetLeft - offsetX;
-                let mouseY = event.clientY - event.target.offsetTop - offsetY;
-                player.targetPosition = {x: mouseX, y: mouseY};
-                player.moveTowards(player.targetPosition);
-            } else {
-                player.stopMovingTowards();
-            }
-        }
-
-        document.addEventListener('mouseup', (event) => {
-            player.stopMovingTowards();
+        document.addEventListener('mousemove', (event) => {
+            this.followMouse(event);
         });
 
         document.addEventListener('mousedown', (event) => {
-            event.preventDefault();
-            if (!player.attacking && event.target.id === 'gameScreen' &&
-                (event.buttons === 2 || event.buttons === 3)) {
-                player.attack();
-            }
+            this.followMouse(event);
         });
+
+        document.addEventListener('mouseup', () => {
+            this.player.speed = {x: 0, y: 0};
+        });
+    }
+
+    getMouseClickPos(event) {
+        let offsetX = this.gameWidth / 2 - this.player.position.x - this.player.width / 2;
+        let offsetY = this.gameHeight / 2 - this.player.position.y - this.player.height / 2;
+        let mousePos = {
+            x: event.clientX - event.target.offsetLeft - offsetX,
+            y: event.clientY - event.target.offsetTop - offsetY
+        }
+        return mousePos;
+    }
+
+    followMouse(event) {
+        event.preventDefault();
+        if (!this.player.attacking && event.target.id === 'gameScreen') {
+            let mousePos = this.getMouseClickPos(event);
+            let dx = mousePos.x - this.player.position.x;
+            let dy = mousePos.y - this.player.position.y;
+            switch (event.buttons) {
+                case 1:
+                    this.player.updateDirection(dx, dy);
+                    this.player.speed = {x: dx, y: dy};
+                    break;
+                case 2:
+                case 3:
+                    this.player.updateDirection(dx, dy);
+                    this.player.attack();
+                    break;
+            }
+        } else {
+            this.player.speed = {x: 0, y: 0};
+        }
     }
 }

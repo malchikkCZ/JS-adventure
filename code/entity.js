@@ -67,7 +67,6 @@ export class Entity {
                 break;
         }
 
-        let playerAura = 0;
         for (let sprite of obstaclesToCheck) {
             if (this.position.x + this.width - this.verticalOffset > sprite.position.x &&
                 this.position.x + this.verticalOffset < sprite.position.x + sprite.width &&
