@@ -27,12 +27,24 @@ export class InputHandler {
                     case ' ' || 'Spacebar':
                         this.player.attack();
                         break;
+                    case 'Control':
+                        this.player.castMagic();
+                        break;
                     case 'q':
                         if (this.player.canSwitchWeapon) {
                             this.player.canSwitchWeapon = false;
                             this.player.weaponIndex++;
                             if (this.player.weaponIndex > this.player.weapons.length - 1) {
                                 this.player.weaponIndex = 0;
+                            }
+                        }
+                        break;
+                    case 'e':
+                        if (this.player.canSwitchSpell) {
+                            this.player.canSwitchSpell = false;
+                            this.player.spellIndex++;
+                            if (this.player.spellIndex > this.player.spells.length - 1) {
+                                this.player.spellIndex = 0;
                             }
                         }
                         break;
@@ -65,6 +77,9 @@ export class InputHandler {
                     break;
                 case 'q':
                     this.player.canSwitchWeapon = true;
+                    break;
+                case 'e':
+                    this.player.canSwitchSpell = true;
                     break;
             }
         });

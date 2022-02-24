@@ -17,7 +17,9 @@ Completely remade in JavaScript by me [(link)](http://www.viktorbem.cz/).
 **Keyboard controls:**<br>
 - `arrow keys` : move
 - `spacebar` : attack
+- `control` : cast spell
 - `q` : change weapon
+- `e` : change spell
 
 <br>
 

@@ -1,6 +1,7 @@
-import { Player } from './player.js';
-import { Monster } from './monster.js';
+import { AnimationPlayer } from './particles.js';
 import { InputHandler } from './input.js';
+import { Monster } from './monster.js';
+import { Player } from './player.js';
 import { Tile } from './tile.js';
 import { UI } from './ui.js';
 
@@ -19,13 +20,15 @@ export class Game {
         this.gameHeight = gameHeight;
         this.tileSize = settings.general.tileSize;
         this.gameOver = false;
+        this.animationPlayer = new AnimationPlayer();
 
         this.groups = {
             obstacleSprites: [],
             visibleSprites: [],
             attackableSprites: [],
             attackSprites: [],
-            entitySprites: []
+            entitySprites: [],
+            particleSprites: []
         };
 
         // graphic assets
@@ -92,7 +95,30 @@ export class Game {
     update(deltaTime) {
         if (!this.gameOver) {
             this.uptime += deltaTime;
-            this.groups.attackSprites.forEach((sprite) => sprite.update());
+            this.groups.attackSprites.forEach((weapon) => {
+                this.groups.attackableSprites.forEach((sprite) => {
+                    if (weapon.position.x + weapon.width > sprite.position.x &&
+                        weapon.position.x < sprite.position.x + sprite.width &&
+                        weapon.position.y + weapon.height > sprite.position.y &&
+                        weapon.position.y < sprite.position.y + sprite.height) {
+                            if (sprite.name === 'grass') {
+                                sprite.killed = true;
+                            } else {
+                                if (!sprite.invulnerable) {
+                                    let damage = weapon.damage;
+                                    sprite.getDamage(damage, weapon.cooldown);
+                                    sprite.attackResistance();
+                                }
+                                if (sprite.health <= 0) {
+                                    this.player.score += sprite.entity.stats.exp;
+                                    sprite.killed = true;
+                                }
+                            }
+                    }
+                });
+                weapon.update();
+            });
+            this.groups.particleSprites.forEach((sprite) => sprite.update());
     
             Object.entries(this.groups).forEach((group) => {
                 this.groups[group[0]] = this.groups[group[0]].filter((sprite) => !sprite.killed);

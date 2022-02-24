@@ -8,6 +8,7 @@ export class Entity {
         this.game = game;
         this.gameWidth = game.gameWidth;
         this.gameHeight = game.gameHeight;
+        this.animationPlayer = game.animationPlayer;
         this.tileSize = game.tileSize;
         this.groups = game.groups;
 

@@ -53,26 +53,6 @@ export class Weapon {
     update() {
         if (this.game.uptime >= this.creationTime + this.cooldown) {
             this.killed = true;
-        } else {
-            this.groups.attackableSprites.forEach((sprite) => {
-                if (this.position.x + this.width > sprite.position.x &&
-                    this.position.x < sprite.position.x + sprite.width &&
-                    this.position.y + this.height > sprite.position.y &&
-                    this.position.y < sprite.position.y + sprite.height) {
-                        if (sprite.name === 'grass') {
-                            sprite.killed = true;
-                        } else {
-                            if (!sprite.invulnerable) {
-                                sprite.getDamage(this.damage, this.cooldown);
-                                sprite.attackResistance();
-                            }
-                            if (sprite.health <= 0) {
-                                this.player.score += sprite.entity.stats.exp;
-                                sprite.killed = true;
-                            }
-                        }
-                }
-            });
         }
     }
 

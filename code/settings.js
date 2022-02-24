@@ -8,12 +8,14 @@ export const settings = {
         stroke: 3,
         barHeight: 20,
         healthBarWidth: 200,
+        magicBarWidth: 140,
         itemBoxSize: 80,
         colors: {
             stroke: '#000000',
             activeStroke: '#FFD700',
             background: '#222222',
             healthBar: '#FF0000',
+            magicBar: '#0000FF',
             text: '#FFFFFF'
         },
         normalFont: '12px "Press Start 2P"',
@@ -109,8 +111,8 @@ export const settings = {
                 'up-attack': [[4, 2]],
                 'left-attack': [[4, 3]]
             },
-            stats: {health: 100, speed: 3},
-            maxStats: {health: 300, speed: 10}
+            stats: {health: 100, energy: 60, speed: 3},
+            maxStats: {health: 300, energy: 140, speed: 10}
         }
     },
     weapons: [
@@ -120,4 +122,8 @@ export const settings = {
         {name: 'rapier', cooldown: 100, damage: 8},
         {name: 'sai', cooldown: 200, damage: 10}
     ],
+    spells: [
+        {name: 'fire', cooldown: 500, strength: 5, cost: 20},
+        {name: 'heal', cooldown: 500, strength: 20, cost: 10}
+    ]
 }
